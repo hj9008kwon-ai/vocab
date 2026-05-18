@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TOPCLASS VOCA</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&family=DM+Mono:wght@400;500&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4ff;
+  --surface: #ffffff;
+  --surface2: #f7f9ff;
+  --border: #dde3f5;
+  --border2: #c8d0f0;
+  --accent: #4f6ef7;
+  --accent2: #3a56e0;
+  --accent-light: #eef1ff;
+  --teal: #0bbf9a;
+  --teal-light: #e0faf4;
+  --coral: #ff6b6b;
+  --coral-light: #fff0f0;
+  --amber: #f5a623;
+  --amber-light: #fff8ec;
+  --ink: #1e2340;
+  --ink2: #4a5170;
+  --muted: #9098b8;
+  --green: #22c08a;
+  --red: #f44b5a;
+  --shadow-sm: 0 2px 8px rgba(79,110,247,0.08);
+  --shadow-md: 0 4px 20px rgba(79,110,247,0.12);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans KR', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+/* ── HEADER ── */
+header {
+  background: linear-gradient(135deg, #4f6ef7 0%, #7c3aed 100%);
+  padding: 0 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 58px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 16px rgba(79,110,247,0.25);
+}
+.logo {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px; font-weight: 900;
+  color: #fff; letter-spacing: -0.3px;
+  display: flex; align-items: center; gap: 8px;
+}
+.logo-badge {
+  background: rgba(255,255,255,0.22);
+  border: 1.5px solid rgba(255,255,255,0.35);
+  border-radius: 6px; padding: 1px 7px;
+  font-size: 11px; font-weight: 700; font-family: 'Noto Sans KR', sans-serif;
+  letter-spacing: 0.04em; color: #fff;
+}
+.header-right { display: flex; align-items: center; gap: 8px; }
+
+.btn {
+  font-family: 'Noto Sans KR', sans-serif; font-size: 12px; font-weight: 600;
+  padding: 7px 15px; border-radius: 20px; cursor: pointer;
+  border: 1.5px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.15);
+  color: #fff; transition: all 0.15s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.btn:hover { background: rgba(255,255,255,0.28); border-color: rgba(255,255,255,0.5); }
+.btn-white { background: #fff; border-color: #fff; color: var(--accent) !important; font-weight: 700; }
+.btn-white:hover { background: #f0f4ff; }
+.btn-mint { background: var(--teal); border-color: var(--teal); color: #fff !important; font-weight: 700; }
+.btn-mint:hover { background: #09a888; border-color: #09a888; }
+
+/* ── TOOLBAR ── */
+.toolbar {
+  background: var(--surface); border-bottom: 1.5px solid var(--border);
+  padding: 10px 24px; display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap; box-shadow: var(--shadow-sm);
+}
+.page-nav { display: flex; align-items: center; gap: 7px; }
+.nav-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: 1.5px solid var(--border2); background: var(--surface); cursor: pointer;
+  font-size: 16px; display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; color: var(--ink2); font-weight: 700;
+  box-shadow: var(--shadow-sm);
+}
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+.nav-btn:disabled { opacity: 0.3; cursor: not-allowed; box-shadow: none; }
+.page-label {
+  font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500;
+  background: var(--accent-light); color: var(--accent);
+  border: 1.5px solid #c5cefc;
+  padding: 4px 14px; border-radius: 20px;
+  min-width: 76px; text-align: center;
+}
+.toolbar-sep { width: 1px; height: 22px; background: var(--border); margin: 0 2px; }
+.word-count {
+  font-size: 12px; color: var(--muted);
+  background: var(--surface2); border: 1.5px solid var(--border);
+  padding: 4px 12px; border-radius: 20px;
+}
+.word-count strong { color: var(--accent); font-weight: 700; }
+.sync-status {
+  margin-left: auto; font-size: 12px; font-weight: 500; color: var(--muted);
+  display: flex; align-items: center; gap: 5px;
+}
+.sync-dot { width: 7px; height: 7px; border-radius: 50%; background: #ddd; flex-shrink: 0; }
+.sync-dot.ok { background: var(--green); }
+.sync-dot.err { background: var(--red); }
+.sync-dot.loading { background: var(--amber); animation: blink 0.8s infinite; }
+@keyframes blink { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+/* ── MAIN ── */
+.main { padding: 20px 24px; }
+@media (max-width: 720px) { .main { padding: 10px 8px; } .toolbar { padding: 8px 10px; } }
+
+/* ── TABLE GRID ── */
+.table-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+@media (max-width: 720px) {
+  .table-grid { grid-template-columns: 1fr; }
+  .hide-mobile { display: none !important; }
+}
+
+.col-card {
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.col-head {
+  display: grid; grid-template-columns: 30px 30px 1.2fr 1fr 22px;
+  gap: 4px; padding: 9px 14px;
+  background: linear-gradient(90deg, #4f6ef7 0%, #7c55f5 100%);
+  color: rgba(255,255,255,0.85);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.word-row {
+  display: grid; grid-template-columns: 30px 30px 1.2fr 1fr 22px;
+  gap: 4px; padding: 5px 14px;
+  border-bottom: 1px solid var(--border);
+  align-items: start; min-height: 36px; padding-top: 7px; padding-bottom: 7px;
+  transition: background 0.1s;
+}
+.word-row:last-child { border-bottom: none; }
+.word-row:nth-child(even) { background: var(--surface2); }
+.word-row:hover { background: var(--accent-light) !important; }
+
+.row-num {
+  font-family: 'DM Mono', monospace; font-size: 11px;
+  color: #c0c8e8; text-align: center; font-weight: 500;
+}
+.spk-btn {
+  background: none; border: none; cursor: pointer;
+  width: 28px; height: 28px; border-radius: 6px;
+  font-size: 15px; display: flex; align-items: center; justify-content: center;
+  transition: background 0.15s; flex-shrink: 0;
+}
+.spk-btn:hover { background: var(--teal-light); }
+.spk-btn:disabled { opacity: 0.2; cursor: default; }
+.eng-inp, .kor-inp {
+  font-family: inherit; font-size: 13px; color: var(--ink);
+  background: transparent; border: none; outline: none;
+  width: 100%; padding: 3px 5px; border-radius: 5px; min-width: 0;
+}
+.eng-inp { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink); }
+.eng-inp:focus { background: var(--accent-light); }
+.kor-inp {
+  color: #7c3aed; font-weight: 500; word-break: keep-all;
+  resize: none; overflow: hidden; line-height: 1.5;
+  height: auto; min-height: 24px;
+}
+.kor-inp:focus { background: #f3eeff; }
+.kor-inp.loading { color: var(--muted); font-style: italic; font-weight: 400; }
+
+.del-btn {
+  background: none; border: none; cursor: pointer;
+  width: 22px; height: 22px; border-radius: 4px;
+  color: #d0d5ee; font-size: 15px; line-height: 1;
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.word-row:hover .del-btn { opacity: 1; }
+.del-btn:hover { background: var(--coral-light); color: var(--coral); }
+
+.add-row-area {
+  border-top: 2px dashed var(--border);
+  display: flex; align-items: center; justify-content: center;
+}
+.add-row-btn {
+  width: 100%; padding: 10px; background: none; border: none; cursor: pointer;
+  color: var(--muted); font-size: 13px; font-family: inherit; font-weight: 500;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: background 0.15s, color 0.15s;
+}
+.add-row-btn:hover { background: var(--accent-light); color: var(--accent); }
+
+/* ── LOADING OVERLAY ── */
+#loadingOverlay {
+  position: fixed; inset: 0; background: rgba(30,35,64,0.45);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 999;
+}
+.loading-box {
+  background: #fff; border-radius: 16px; padding: 36px 48px;
+  text-align: center; box-shadow: 0 12px 40px rgba(79,110,247,0.2);
+}
+.spinner {
+  width: 38px; height: 38px; border: 3px solid #e8ecff;
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 0.7s linear infinite; margin: 0 auto 16px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-box p { font-size: 14px; color: var(--ink2); font-weight: 500; }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  background: var(--ink); color: #fff; padding: 10px 22px;
+  border-radius: 20px; font-size: 13px; font-weight: 600;
+  opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999;
+  white-space: nowrap; box-shadow: 0 6px 24px rgba(30,35,64,0.25);
+}
+#toast.show { opacity: 1; }
+
+/* ── PRINT ── */
+@media print {
+  @page { size: A4 landscape; margin: 8mm; }
+
+  header, .toolbar .btn, .toolbar .nav-btn, .add-row-btn, .add-row-area,
+  .del-btn, .spk-btn, #loadingOverlay, #toast, .sync-status { display: none !important; }
+
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+
+  body { background: #fff; font-size: 11px; }
+
+  .toolbar {
+    background: #fff; border: none; padding: 3mm 0 2mm;
+    justify-content: center; box-shadow: none; flex-wrap: nowrap;
+  }
+  .page-label { background: #eef1ff; color: #4f6ef7; border: 1px solid #c5cefc; font-size: 11px; }
+  .word-count { font-size: 11px; }
+
+  .main { padding: 0; }
+
+  .table-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 5mm;
+  }
+
+  .col-card { border: 0.5px solid #bbb; box-shadow: none; break-inside: avoid; }
+
+  .col-head {
+    display: grid !important;
+    grid-template-columns: 24px 0px 1.2fr 1fr 0px !important;
+    gap: 2px; padding: 5px 8px;
+    background: #4f6ef7 !important;
+    color: #fff !important;
+    font-size: 9px;
+  }
+
+  .word-row {
+    display: grid !important;
+    grid-template-columns: 24px 0px 1.2fr 1fr 0px !important;
+    gap: 2px; padding: 3px 8px;
+    min-height: 22px;
+    border-bottom: 0.5px solid #e0e4f5;
+    align-items: start;
+    background: #fff !important;
+  }
+  .word-row:nth-child(even) { background: #f7f9ff !important; }
+
+  .spk-btn { display: none !important; }
+  .del-btn { display: none !important; }
+
+  .row-num { font-size: 9px; color: #999; padding-top: 2px; }
+
+  .eng-inp { display: none !important; }
+  .kor-inp { display: none !important; }
+
+  .print-span {
+    display: block;
+    width: 100%; padding: 1px 2px;
+    word-break: keep-all; white-space: pre-wrap;
+  }
+  .eng-inp.print-span {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px; color: #1e2340;
+  }
+  .kor-inp.print-span {
+    font-size: 10px; color: #7c3aed; font-weight: 500;
+  }
+}
+</style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+  <div class="loading-box">
+    <div class="spinner"></div>
+    <p>단어장 불러오는 중...</p>
+  </div>
+</div>
+
+<header>
+  <div class="logo">
+    TOPCLASS VOCA
+    <span class="logo-badge">단어장</span>
+  </div>
+  <div class="header-right">
+    <button class="btn" onclick="syncFromCloud()">☁️ 동기화</button>
+    <button class="btn btn-white" onclick="addWord()">＋ 단어 추가</button>
+    <button class="btn btn-mint hide-mobile" onclick="printPage()">🖨 인쇄</button>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="page-nav">
+    <button class="nav-btn" id="prevBtn" onclick="changePage(-1)" disabled>‹</button>
+    <span class="page-label" id="pageLabel">1 페이지</span>
+    <button class="nav-btn" id="nextBtn" onclick="changePage(1)">›</button>
+  </div>
+  <div class="toolbar-sep"></div>
+  <span class="word-count" id="wordCount">이 페이지 <strong>0</strong>개 / 전체 <strong>0</strong>개</span>
+  <div class="sync-status">
+    <span class="sync-dot" id="syncDot"></span>
+    <span id="syncMsg">연결 안됨</span>
+  </div>
+</div>
+
+<div class="main">
+  <div class="table-grid">
+    <div class="col-card">
+      <div class="col-head">
+        <span>번호</span><span></span><span>영어</span><span>한글 뜻</span><span></span>
+      </div>
+      <div id="leftRows"></div>
+      <div class="add-row-area">
+        <button class="add-row-btn" id="leftAddBtn" onclick="addRow('left')">＋ 단어 추가</button>
+      </div>
+    </div>
+    <div class="col-card">
+      <div class="col-head">
+        <span>번호</span><span></span><span>영어</span><span>한글 뜻</span><span></span>
+      </div>
+      <div id="rightRows"></div>
+      <div class="add-row-area">
+        <button class="add-row-btn" id="rightAddBtn" onclick="addRow('right')">＋ 단어 추가</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ══════════════════════════════════════
+// ★ 여기에 Apps Script 웹앱 URL 입력
+// ══════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby7pv2B3oy___iTyEV5c0gNPCTJLh3CQN0mzTyq8rBlNFJAHH5li37jaZ6uBj2jCzT_kQ/exec';
+
+// ══════════════════════════════════════
+// API
+// ══════════════════════════════════════
+async function apiGet(params) {
+  const url = SCRIPT_URL + '?' + new URLSearchParams(params);
+  const res = await fetch(url);
+  return res.json();
+}
+async function apiPost(body) {
+  const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(body) });
+  return res.json();
+}
+
+// ══════════════════════════════════════
+// STATE
+// ══════════════════════════════════════
+let currentPage = 1;
+let totalPages = 1;
+
+// vocabData: { pageNum: { left: [{id,english,meaning}, ...], right: [...] } }
+let vocabData = {};
+
+function load(k, d) { try { return JSON.parse(localStorage.getItem(k)) || d; } catch { return d; } }
+function save(k, v) { localStorage.setItem(k, JSON.stringify(v)); }
+
+function loadLocal() {
+  vocabData = load('vocab_data', {});
+  currentPage = load('vocab_page', 1);
+  recalcTotalPages();
+}
+function saveLocal() {
+  save('vocab_data', vocabData);
+  save('vocab_page', currentPage);
+}
+
+function recalcTotalPages() {
+  const pages = Object.keys(vocabData).map(Number).filter(n => !isNaN(n));
+  totalPages = pages.length > 0 ? Math.max(...pages) : 1;
+}
+
+function getPageData(page) {
+  if (!vocabData[page]) vocabData[page] = { left: [], right: [] };
+  return vocabData[page];
+}
+
+// ══════════════════════════════════════
+// CLOUD SYNC
+// ══════════════════════════════════════
+function setSyncStatus(state, msg) {
+  const dot = document.getElementById('syncDot');
+  const msgEl = document.getElementById('syncMsg');
+  dot.className = 'sync-dot ' + state;
+  msgEl.textContent = msg;
+}
+
+async function syncFromCloud(isInit = false) {
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') {
+    setSyncStatus('err', 'Script URL 미설정');
+    hideLoading();
+    showToast('⚠️ Apps Script URL을 설정해주세요');
+    return;
+  }
+  setSyncStatus('loading', '불러오는 중...');
+  try {
+    const data = await apiGet({ action: 'readAll' });
+    if (data.error) throw new Error(data.error);
+
+    vocabData = {};
+    for (const row of (data.words || [])) {
+      const page = parseInt(row.page) || 1;
+      const col = row.col || 'left';
+      if (!vocabData[page]) vocabData[page] = { left: [], right: [] };
+      vocabData[page][col].push({ id: row.id, english: row.english, meaning: row.meaning });
+    }
+
+    recalcTotalPages();
+    saveLocal();
+    setSyncStatus('ok', '동기화 완료');
+    renderAll();
+    showToast('✅ 동기화 완료');
+  } catch (e) {
+    setSyncStatus('err', '동기화 실패');
+    showToast('❌ 동기화 실패: ' + e.message);
+  }
+  if (isInit) hideLoading();
+}
+
+async function cloudSaveWord(wordObj) {
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+  try {
+    await apiPost({ action: 'saveWord', ...wordObj });
+    setSyncStatus('ok', '저장됨');
+  } catch (e) {
+    setSyncStatus('err', '저장 실패 (로컬만)');
+  }
+}
+
+async function cloudDeleteWord(id) {
+  if (SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL_HERE') return;
+  try {
+    await apiPost({ action: 'deleteWord', id });
+  } catch (e) { }
+}
+
+// ══════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════
+function renderAll() {
+  renderCol('left');
+  renderCol('right');
+  updateToolbar();
+}
+
+function renderCol(col) {
+  const container = document.getElementById(col === 'left' ? 'leftRows' : 'rightRows');
+  const addBtn = document.getElementById(col === 'left' ? 'leftAddBtn' : 'rightAddBtn');
+  const pageD = getPageData(currentPage);
+  const words = pageD[col] || [];
+  container.innerHTML = '';
+  words.forEach((w, i) => container.appendChild(makeRow(col, i, w)));
+  addBtn.style.display = words.length >= 50 ? 'none' : '';
+}
+
+function makeRow(col, idx, word) {
+  const globalNum = (currentPage - 1) * 100 + (col === 'left' ? idx + 1 : 50 + idx + 1);
+  const div = document.createElement('div');
+  div.className = 'word-row';
+
+  // 번호
+  const num = document.createElement('span');
+  num.className = 'row-num';
+  num.textContent = globalNum;
+
+  // 스피커
+  const spk = document.createElement('button');
+  spk.className = 'spk-btn';
+  spk.title = '발음 듣기';
+  spk.textContent = '🔊';
+  spk.disabled = !word.english;
+  spk.onclick = () => speak(word.english);
+
+  // 영어 입력
+  const engInp = document.createElement('input');
+  engInp.className = 'eng-inp';
+  engInp.type = 'text';
+  engInp.value = word.english || '';
+  engInp.placeholder = 'English...';
+  engInp.spellcheck = false;
+  engInp.onblur = (e) => onEngBlur(col, idx, e.target.value.trim());
+  engInp.onkeydown = (e) => { if (e.key === 'Enter') engInp.blur(); };
+
+  // 한글 뜻 입력
+  const korInp = document.createElement('textarea');
+  korInp.className = 'kor-inp';
+  korInp.value = word.meaning || '';
+  korInp.placeholder = '한글 뜻...';
+  korInp.rows = 1;
+  korInp.onblur = (e) => onKorBlur(col, idx, e.target.value);
+  korInp.oninput = function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+  };
+  if (word.meaning) { setTimeout(() => { korInp.style.height = 'auto'; korInp.style.height = korInp.scrollHeight + 'px'; }, 0); }
+
+  // 삭제 버튼
+  const del = document.createElement('button');
+  del.className = 'del-btn';
+  del.textContent = '×';
+  del.title = '삭제';
+  del.onclick = () => deleteRow(col, idx, word.id);
+
+  div.append(num, spk, engInp, korInp, del);
+  return div;
+}
+
+function updateToolbar() {
+  document.getElementById('pageLabel').textContent = currentPage + ' 페이지';
+  document.getElementById('prevBtn').disabled = currentPage <= 1;
+
+  const pageD = getPageData(currentPage);
+  const pageCount = (pageD.left?.length || 0) + (pageD.right?.length || 0);
+
+  let total = 0;
+  Object.values(vocabData).forEach(p => {
+    total += (p.left?.length || 0) + (p.right?.length || 0);
+  });
+
+  document.getElementById('wordCount').innerHTML =
+    `이 페이지 <strong>${pageCount}</strong>개 / 전체 <strong>${total}</strong>개`;
+}
+
+// ══════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════
+function addRow(col) {
+  const pageD = getPageData(currentPage);
+  const words = pageD[col] || [];
+  if (words.length >= 50) {
+    // 반대 칸에 여유 있으면 거기에 추가
+    const other = col === 'left' ? 'right' : 'left';
+    if ((pageD[other]?.length || 0) < 50) { addRow(other); return; }
+    // 둘 다 꽉 찼으면 다음 페이지로
+    showToast('이 페이지가 가득 찼어요! 다음 페이지로 이동합니다.');
+    changePage(1, true); return;
+  }
+  const newWord = { id: Date.now() + Math.random(), english: '', meaning: '' };
+  pageD[col].push(newWord);
+  saveLocal();
+  renderCol(col);
+  updateToolbar();
+  setTimeout(() => {
+    const rows = document.getElementById(col === 'left' ? 'leftRows' : 'rightRows').querySelectorAll('.word-row');
+    const last = rows[rows.length - 1];
+    if (last) last.querySelector('.eng-inp')?.focus();
+  }, 30);
+}
+
+function addWord() {
+  const pageD = getPageData(currentPage);
+  if ((pageD.left?.length || 0) < 50) addRow('left');
+  else if ((pageD.right?.length || 0) < 50) addRow('right');
+  else { showToast('이 페이지가 가득 찼어요! 다음 페이지로 이동합니다.'); changePage(1, true); }
+}
+
+function deleteRow(col, idx, id) {
+  const pageD = getPageData(currentPage);
+  pageD[col].splice(idx, 1);
+  saveLocal();
+  renderCol(col);
+  updateToolbar();
+  if (id) cloudDeleteWord(id);
+}
+
+async function onEngBlur(col, idx, val) {
+  const pageD = getPageData(currentPage);
+  const word = pageD[col][idx];
+  if (!word) return;
+  const prev = word.english;
+  word.english = val;
+
+  if (!val) { saveLocal(); renderCol(col); updateToolbar(); return; }
+  if (prev === val && word.meaning) return; // 변경 없음
+
+  // 한글 뜻 자동 생성
+  setKorLoading(col, idx, true);
+  const meaning = await fetchMeaning(val);
+  if (pageD[col][idx]) {
+    pageD[col][idx].meaning = meaning;
+    saveLocal();
+    renderCol(col);
+    updateToolbar();
+    cloudSaveWord({ id: word.id, page: currentPage, col, english: val, meaning });
+  }
+}
+
+function onKorBlur(col, idx, val) {
+  const pageD = getPageData(currentPage);
+  const word = pageD[col][idx];
+  if (!word) return;
+  word.meaning = val;
+  saveLocal();
+  if (word.english) cloudSaveWord({ id: word.id, page: currentPage, col, english: word.english, meaning: val });
+}
+
+function setKorLoading(col, idx, on) {
+  const container = document.getElementById(col === 'left' ? 'leftRows' : 'rightRows');
+  const rows = container.querySelectorAll('.word-row');
+  if (rows[idx]) {
+    const inp = rows[idx].querySelectorAll('input')[1];
+    if (inp) {
+      inp.disabled = on;
+      inp.className = on ? 'kor-inp loading' : 'kor-inp';
+      inp.placeholder = on ? '뜻 생성 중...' : '한글 뜻...';
+    }
+  }
+}
+
+// ══════════════════════════════════════
+// 뜻 자동 생성 (Google 번역 via Apps Script)
+// ══════════════════════════════════════
+async function fetchMeaning(word) {
+  try {
+    const url = SCRIPT_URL + '?' + new URLSearchParams({ action: 'translate', word: word });
+    const resp = await fetch(url);
+    const data = await resp.json();
+    return data.meaning || '';
+  } catch (e) { return ''; }
+}
+
+// ══════════════════════════════════════
+// TTS
+// ══════════════════════════════════════
+function speak(word) {
+  if (!word || !window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(word);
+  u.lang = 'en-US'; u.rate = 0.85;
+  speechSynthesis.speak(u);
+}
+
+// ══════════════════════════════════════
+// PAGE NAV
+// ══════════════════════════════════════
+function changePage(dir, forceNew = false) {
+  const newPage = currentPage + dir;
+  if (newPage < 1) return;
+  if (!vocabData[newPage]) vocabData[newPage] = { left: [], right: [] };
+  currentPage = newPage;
+  recalcTotalPages();
+  saveLocal();
+  renderAll();
+  window.scrollTo(0, 0);
+}
+
+// ══════════════════════════════════════
+// PRINT
+// ══════════════════════════════════════
+function printPage() {
+  const pageD = getPageData(currentPage);
+  const leftWords = pageD.left || [];
+  const rightWords = pageD.right || [];
+  const pg = currentPage;
+
+  const buildRows = function(words, startNum) {
+    let rows = '';
+    const count = Math.max(words.length, 5);
+    for (let i = 0; i < count; i++) {
+      const w = words[i] || {english:'', meaning:''};
+      rows += '<tr><td class=n>' + (startNum+i) + '</td>'
+            + '<td class=e>' + (w.english||'') + '</td>'
+            + '<td class=k>' + (w.meaning||'') + '</td></tr>';
+    }
+    return rows;
+  };
+
+  const leftStart  = (pg - 1) * 100 + 1;
+  const rightStart = (pg - 1) * 100 + 51;
+
+  const css = '@page{size:A4 landscape;margin:5mm}'
+    + '*{box-sizing:border-box;margin:0;padding:0}'
+    + 'body{font-family:sans-serif;background:#fff;padding:2mm}'
+    + 'h1{text-align:center;font-size:12pt;color:#4f6ef7;margin-bottom:3mm}'
+    + 'h1 small{font-size:9pt;color:#999;font-weight:normal;margin-left:6px}'
+    + '.grid{display:grid;grid-template-columns:1fr 1fr;gap:4mm}'
+    + 'table{width:100%;border-collapse:collapse;table-layout:fixed}'
+    + 'thead tr{background:#4f6ef7;color:#fff;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    + 'th{padding:3px 5px;font-size:8pt;text-align:left}'
+    + 'th.n{width:20px;text-align:center}th.e{width:42%}'
+    + 'tr{border-bottom:0.4px solid #dde3f5}'
+    + 'tr:nth-child(even){background:#f7f9ff;-webkit-print-color-adjust:exact;print-color-adjust:exact}'
+    + 'td{padding:2px 5px;font-size:9pt;vertical-align:top;word-break:keep-all;line-height:1.45}'
+    + 'td.n{text-align:center;font-size:8pt;color:#bbb;font-family:monospace}'
+    + 'td.e{font-family:monospace;color:#1e2340}'
+    + 'td.k{color:#7c3aed;font-weight:500}';
+
+  const lRows = buildRows(leftWords, leftStart);
+  const rRows = buildRows(rightWords, rightStart);
+
+  const html = '<!DOCTYPE html><html><head><meta charset=UTF-8>'
+    + '<style>' + css + '</style></head><body>'
+    + '<h1>TOPCLASS VOCA <small>' + pg + ' 페이지</small></h1>'
+    + '<div class=grid>'
+    + '<table><thead><tr><th class=n>No</th><th class=e>영어</th><th>한글 뚻</th></tr></thead>'
+    + '<tbody>' + lRows + '</tbody></table>'
+    + '<table><thead><tr><th class=n>No</th><th class=e>영어</th><th>한글 뚻</th></tr></thead>'
+    + '<tbody>' + rRows + '</tbody></table>'
+    + '</div></body></html>';
+
+  const win = window.open('', '_blank');
+  win.document.open();
+  win.document.write(html);
+  win.document.close();
+  setTimeout(function(){ win.print(); win.close(); }, 600);
+}
+
+
+function showLoading() { document.getElementById('loadingOverlay').style.display = 'flex'; }
+function hideLoading() { document.getElementById('loadingOverlay').style.display = 'none'; }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+(async function init() {
+  loadLocal();
+  renderAll();
+  if (SCRIPT_URL !== 'YOUR_APPS_SCRIPT_URL_HERE') {
+    await syncFromCloud(true);
+  } else {
+    hideLoading();
+    setSyncStatus('err', 'Script URL 미설정');
+  }
+})();
+</script>
+</body>
+</html>
