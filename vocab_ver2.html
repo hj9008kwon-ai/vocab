@@ -302,7 +302,7 @@ header {
 // ══════════════════════════════════════
 // ★ 여기에 Apps Script 웹앱 URL 입력
 // ══════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxf9_7qDcQJJWdH2hBGBF8vkc72QvlI1DuJKcxs2Lh_tUtcA8itwhFd5HwtKNhC0E5Q7A/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw7mbaJPYku3fU6wQJpPIwP2Hoj4-9S_TW07fl3ZAjI4xwzSAzRawtC0HG48oYWwdBVDQ/exec';
 
 // ══════════════════════════════════════
 // API
@@ -578,24 +578,14 @@ function setKorLoading(col, idx, on) {
 }
 
 // ══════════════════════════════════════
-// AI 뜻 자동 생성 (Claude API)
+// 뜻 자동 생성 (Google 번역 via Apps Script)
 // ══════════════════════════════════════
 async function fetchMeaning(word) {
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 80,
-        messages: [{
-          role: 'user',
-          content: `영어 단어 또는 숙어 "${word}"의 한국어 뜻을 알려줘. 중학생 영어 수준에서 가장 많이 쓰이는 뜻 1~2개만. 예시: "아름다운, 멋진" 형식으로. 설명 없이 뜻만.`
-        }]
-      })
-    });
+    const url = SCRIPT_URL + '?' + new URLSearchParams({ action: 'translate', word: word });
+    const resp = await fetch(url);
     const data = await resp.json();
-    return data.content?.[0]?.text?.trim() || '';
+    return data.meaning || '';
   } catch (e) { return ''; }
 }
 
