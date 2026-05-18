@@ -276,19 +276,20 @@ header {
 
   .row-num { font-size: 9px; color: #999; padding-top: 2px; }
 
-  .eng-inp {
+  .eng-inp { display: none !important; }
+  .kor-inp { display: none !important; }
+
+  .print-span {
+    display: block;
+    width: 100%; padding: 1px 2px;
+    word-break: keep-all; white-space: pre-wrap;
+  }
+  .eng-inp.print-span {
     font-family: 'DM Mono', monospace;
     font-size: 10px; color: #1e2340;
-    background: transparent; border: none; outline: none;
-    width: 100%; padding: 1px 2px;
   }
-
-  .kor-inp {
-    font-size: 10px; color: #7c3aed;
-    background: transparent; border: none; outline: none;
-    width: 100%; padding: 1px 2px;
-    resize: none; overflow: visible;
-    white-space: pre-wrap; word-break: keep-all;
+  .kor-inp.print-span {
+    font-size: 10px; color: #7c3aed; font-weight: 500;
   }
 }
 </style>
@@ -677,7 +678,22 @@ function changePage(dir, forceNew = false) {
 // PRINT
 // ══════════════════════════════════════
 function printPage() {
+  // input/textarea 값을 span으로 교체
+  const inputs = document.querySelectorAll('.eng-inp, .kor-inp');
+  inputs.forEach(el => {
+    const span = document.createElement('span');
+    span.className = el.className + ' print-span';
+    span.textContent = el.value;
+    span.dataset.original = 'true';
+    el.parentNode.insertBefore(span, el);
+    el.style.display = 'none';
+  });
+
   window.print();
+
+  // 인쇄 후 복원
+  document.querySelectorAll('.print-span').forEach(span => span.remove());
+  inputs.forEach(el => el.style.display = '');
 }
 
 // ══════════════════════════════════════
