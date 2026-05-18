@@ -113,10 +113,14 @@ header {
 
 /* ── MAIN ── */
 .main { padding: 20px 24px; }
+@media (max-width: 720px) { .main { padding: 10px 8px; } .toolbar { padding: 8px 10px; } }
 
 /* ── TABLE GRID ── */
 .table-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-@media (max-width: 720px) { .table-grid { grid-template-columns: 1fr; } }
+@media (max-width: 720px) {
+  .table-grid { grid-template-columns: 1fr; }
+  .hide-mobile { display: none !important; }
+}
 
 .col-card {
   background: var(--surface); border: 1.5px solid var(--border);
@@ -124,7 +128,7 @@ header {
   box-shadow: var(--shadow-md);
 }
 .col-head {
-  display: grid; grid-template-columns: 36px 34px 1fr 1fr 28px;
+  display: grid; grid-template-columns: 30px 30px 1.2fr 1fr 22px;
   gap: 4px; padding: 9px 14px;
   background: linear-gradient(90deg, #4f6ef7 0%, #7c55f5 100%);
   color: rgba(255,255,255,0.85);
@@ -132,10 +136,10 @@ header {
   text-transform: uppercase;
 }
 .word-row {
-  display: grid; grid-template-columns: 36px 34px 1fr 1fr 28px;
+  display: grid; grid-template-columns: 30px 30px 1.2fr 1fr 22px;
   gap: 4px; padding: 5px 14px;
   border-bottom: 1px solid var(--border);
-  align-items: center; min-height: 36px;
+  align-items: start; min-height: 36px; padding-top: 7px; padding-bottom: 7px;
   transition: background 0.1s;
 }
 .word-row:last-child { border-bottom: none; }
@@ -161,7 +165,11 @@ header {
 }
 .eng-inp { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--ink); }
 .eng-inp:focus { background: var(--accent-light); }
-.kor-inp { color: #7c3aed; font-weight: 500; }
+.kor-inp {
+  color: #7c3aed; font-weight: 500; word-break: keep-all;
+  resize: none; overflow: hidden; line-height: 1.5;
+  height: auto; min-height: 24px;
+}
 .kor-inp:focus { background: #f3eeff; }
 .kor-inp.loading { color: var(--muted); font-style: italic; font-weight: 400; }
 
@@ -255,7 +263,7 @@ header {
   <div class="header-right">
     <button class="btn" onclick="syncFromCloud()">☁️ 동기화</button>
     <button class="btn btn-white" onclick="addWord()">＋ 단어 추가</button>
-    <button class="btn btn-mint" onclick="printPage()">🖨 인쇄</button>
+    <button class="btn btn-mint hide-mobile" onclick="printPage()">🖨 인쇄</button>
   </div>
 </header>
 
@@ -456,13 +464,17 @@ function makeRow(col, idx, word) {
   engInp.onkeydown = (e) => { if (e.key === 'Enter') engInp.blur(); };
 
   // 한글 뜻 입력
-  const korInp = document.createElement('input');
+  const korInp = document.createElement('textarea');
   korInp.className = 'kor-inp';
-  korInp.type = 'text';
   korInp.value = word.meaning || '';
   korInp.placeholder = '한글 뜻...';
+  korInp.rows = 1;
   korInp.onblur = (e) => onKorBlur(col, idx, e.target.value);
-  korInp.onkeydown = (e) => { if (e.key === 'Enter') korInp.blur(); };
+  korInp.oninput = function() {
+    this.style.height = 'auto';
+    this.style.height = this.scrollHeight + 'px';
+  };
+  if (word.meaning) { setTimeout(() => { korInp.style.height = 'auto'; korInp.style.height = korInp.scrollHeight + 'px'; }, 0); }
 
   // 삭제 버튼
   const del = document.createElement('button');
